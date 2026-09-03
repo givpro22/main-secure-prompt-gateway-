@@ -608,6 +608,27 @@ export function createFixtureState() {
     return request
   }
 
+  /*
+   * 대기 중인 해제 요청 하나를 미리 넣어 둔다.
+   *
+   * 픽스처는 메모리에만 있어서 서버를 다시 띄우면 요청이 전부 날아간다. 그러면
+   * 보안 담당자로 들어갔을 때 종도 대기열도 비어 있어, 시연에서 이 기능이 없는
+   * 것처럼 보인다. 고객 명단과 이름이 겹치는 직원을 부른 문장으로 하나 깔아 둔다.
+   */
+  {
+    const requester = USERS.find((u) => u.userId === 1)
+    const { messageId } = createInspection({
+      text: '서지윤 대리한테 스프린트 회고 정리 넘겨줘',
+      userId: requester.userId,
+      createdAt: new Date(Date.now() - 42 * 60 * 1000).toISOString(),
+    })
+    createUnmaskRequest(
+      messageId,
+      requester,
+      '개발팀 서지윤 대리입니다. 고객 명단과 이름만 같습니다.',
+    )
+  }
+
   return {
     inspections,
     createInspection,
@@ -755,6 +776,23 @@ export function fixtureServer() {
 
               const created = state.createUnmaskRequest(messageId, user, reason)
               return send(res, 201, state.unmaskRow(created, false))
+            }
+
+            const mineMatch = path.match(/^\/messages\/(\d+)\/unmask-request$/)
+            if (req.method === 'GET' && mineMatch) {
+              if (!req.headers['x-user-id']) return fail(res, 400, 'MISSING_USER_HEADER', 'X-User-Id header is required')
+              const user = USERS.find((u) => u.userId === userId)
+              if (!user) return fail(res, 400, 'INVALID_USER', `user ${userId} not found`)
+
+              const messageId = Number(mineMatch[1])
+              const inspection = [...state.inspections.values()].find((i) => i.messageId === messageId)
+              if (!inspection) return fail(res, 404, 'MESSAGE_NOT_FOUND', `message ${messageId}를 찾을 수 없습니다.`)
+              if (inspection.user.userId !== userId) {
+                return fail(res, 403, 'FORBIDDEN_NOT_AUTHOR', '자기 건만 볼 수 있습니다.')
+              }
+              const found = [...state.unmaskRequests.values()].find((r) => r.messageId === messageId)
+              if (!found) return fail(res, 404, 'UNMASK_REQUEST_NOT_FOUND', '해제 요청이 없습니다.')
+              return send(res, 200, state.unmaskRow(found, false))
             }
 
             if (req.method === 'GET' && path === '/unmask-requests') {

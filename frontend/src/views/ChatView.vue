@@ -17,6 +17,7 @@ import { errorText, expectField } from '../lib/contract'
 import { DECIDED_BY_TERMS, term } from '../lib/terms'
 import { useSessionStore } from '../stores/session'
 import { useThreadStore } from '../stores/thread'
+import { notificationFromVerdict, useNotificationStore } from '../stores/notifications'
 
 /*
  * SCR-01 직원 AI 챗 — 상태 5종 (기획서 5.3).
@@ -29,6 +30,7 @@ import { useThreadStore } from '../stores/thread'
  */
 
 const thread = useThreadStore()
+const notifications = useNotificationStore()
 const session = useSessionStore()
 const draft = ref('')
 
@@ -61,11 +63,22 @@ watch(
   },
 )
 
-// 작성 중 항목 — 입력창만 복원한다.
+/*
+ * 작성 중 항목 — 빈 화면에 입력만 얹는다.
+ *
+ * 예전에는 입력창만 채웠다. 그러면 대화가 이미 있을 때 보내지도 않은 문장이 앞
+ * 판정들 아래에 끼어들어 한 흐름처럼 보인다. 쓰다 만 것은 아직 시작하지 않은
+ * 대화이므로 새 대화와 같은 자리에서 열어야 한다.
+ */
 watch(
   () => thread.pendingDraft,
   (picked) => {
-    if (picked) draft.value = picked.text
+    if (!picked) return
+    entries.value = []
+    ownEntries.value = []
+    showingOwn.value = true
+    banner.value = ''
+    draft.value = picked.text
   },
 )
 
@@ -184,6 +197,7 @@ watch(
     draft.value = saved?.draft ?? ''
     banner.value = ''
     thread.useAccount(next)
+    notifications.useAccount(next)
   },
   { immediate: true },
 )
@@ -237,6 +251,10 @@ async function send() {
     // "이번 세션"은 **직접 입력해 답변을 받은 것**만 센다. 데모 대화를 열어보는 것은
     // 지난 대화를 훑는 행동이지 내가 이번에 한 일이 아니다.
     if (!replaying.value) thread.addTurn(text, verdict.decision)
+    // 판정은 알림함에도 한 줄 남는다. 데모 대화를 훑는 것은 내가 이번에 한 일이 아니다.
+    if (!replaying.value) {
+      notifications.push(session.currentUserId, notificationFromVerdict(verdict))
+    }
 
     if (verdict.decision === 'PENDING') startPolling(entry)
   } catch (err) {

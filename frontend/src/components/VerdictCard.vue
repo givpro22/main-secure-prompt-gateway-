@@ -1,6 +1,8 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { requestUnmask } from '../api/unmask'
+import { useNotificationStore } from '../stores/notifications'
+import { useSessionStore } from '../stores/session'
 import LlmPicker from './LlmPicker.vue'
 import MaskedText from './MaskedText.vue'
 import StatusBadge from './StatusBadge.vue'
@@ -116,10 +118,20 @@ async function sendToSelected() {
     ? `${target.url}?${target.prefill}=${encodeURIComponent(text)}`
     : target.url
   window.open(url, '_blank', 'noopener,noreferrer')
+
+  notifications.push(session.currentUserId, {
+    tone: isMask.value ? 'mask' : 'allow',
+    kind: '외부 전송',
+    title: `${target.name}(으)로 승인 본문을 넘겼습니다`,
+    body: isMask.value ? '마스킹 적용본이 나갔습니다.' : '원문 그대로 나갔습니다.',
+  })
 }
 
 const isAllow = computed(() => props.verdict.decision === 'ALLOW')
 const isBlock = computed(() => props.verdict.decision === 'BLOCK')
+const session = useSessionStore()
+const notifications = useNotificationStore()
+
 const isMask = computed(() => props.verdict.decision === 'MASK')
 
 /*
@@ -134,6 +146,12 @@ const isMask = computed(() => props.verdict.decision === 'MASK')
  * 화면이 더 위험하다. 얻는 것은 "이 건은 가릴 필요가 없었다"는 판단이고, 그것을 근거로
  * 다시 보내는 것은 사람이 한다.
  */
+/** 알림 한 줄에 들어갈 만큼만 자른다 */
+function shortTitle(text) {
+  const one = (text ?? '').replace(/\s+/g, ' ').trim()
+  return one.length > 20 ? `${one.slice(0, 20)}…` : one
+}
+
 const asking = ref(false)
 const reason = ref('')
 const submitting = ref(false)
@@ -163,6 +181,20 @@ async function submitAsk() {
   try {
     requested.value = await requestUnmask(props.verdict.messageId, text)
     asking.value = false
+    /*
+     * 어느 발화에 대한 요청인지 함께 남긴다. 알림함이 계정 단위라 세션을 여럿 돌리고
+     * 나면 "마스킹 검토를 요청했습니다"만으로는 어느 건인지 알 수 없다.
+     */
+    const label = shortTitle(props.originalText)
+    notifications.push(session.currentUserId, {
+      tone: 'request',
+      kind: '검토 요청',
+      title: `${label} — 마스킹 검토를 요청했습니다`,
+      body: text,
+    })
+    // 확정이 나면 이 계정 알림함으로 돌아온다. 목록 API는 담당자 전용이라 요청자는
+    // 자기 건을 직접 물어야 한다 (D25).
+    notifications.watch(session.currentUserId, props.verdict.messageId, label)
   } catch (err) {
     requestError.value =
       err?.response?.data?.message ?? '검토 요청을 보내지 못했습니다. 잠시 후 다시 시도하세요.'
@@ -230,11 +262,8 @@ const summary = computed(() => {
     </p>
 
     <!-- 마스킹 해제 검토 요청 (D25). 사람이 원문과 마스킹본을 비교해 정한다 -->
-    <div v-if="canAskUnmask" class="unmask">
-      <button v-if="!asking" type="button" class="unmask-open" @click="openAsk">
-        마스킹 검토 요청
-      </button>
-      <form v-else class="unmask-form" @submit.prevent="submitAsk">
+    <div v-if="asking" class="unmask">
+      <form class="unmask-form" @submit.prevent="submitAsk">
         <label class="unmask-label" for="unmask-reason">
           왜 가리지 않아도 되는지 적어 주세요. 보안 담당자가 원문과 함께 봅니다.
         </label>
@@ -283,6 +312,14 @@ const summary = computed(() => {
         <span v-if="copied" class="copied" role="status">— 복사했습니다</span>
       </span>
       <span class="egress-actions">
+        <button
+          v-if="canAskUnmask"
+          type="button"
+          class="egress-btn ghost"
+          @click="openAsk"
+        >
+          검토 요청
+        </button>
         <LlmPicker v-model="targetId" :options="EXTERNAL_LLMS" />
         <button type="button" class="egress-btn" @click="sendToSelected">
           {{ selectedLlm?.prefill ? '바로 전송' : '복사 후 열기' }}
@@ -443,18 +480,6 @@ const summary = computed(() => {
 .unmask {
   margin-top: 12px;
 }
-.unmask-open {
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 7px 13px;
-  background: #fff;
-  color: var(--navy);
-  font-size: 13px;
-  cursor: pointer;
-}
-.unmask-open:hover {
-  border-color: var(--navy);
-}
 .unmask-form {
   display: flex;
   flex-direction: column;
@@ -549,6 +574,16 @@ const summary = computed(() => {
   font: inherit;
   font-size: 12.5px;
   font-weight: 600;
+}
+/* 같은 줄의 두 번째 동작. 모양은 같고 채움만 뺀다 — 나가는 것은 하나뿐이라
+   둘 다 진하게 두면 무엇이 주된 동작인지 흐려진다 */
+.egress-btn.ghost {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--navy);
+}
+.egress-btn.ghost:hover {
+  border-color: var(--navy);
 }
 
 .egress-btn:hover {
