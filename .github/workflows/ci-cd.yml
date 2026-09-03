@@ -95,7 +95,10 @@ jobs:
           - name: frontend
             context: ./frontend
     steps:
+      # 화면의 정책 버전이 커밋 수다. 기본 얕은 클론이면 항상 1이 나온다.
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - name: GHCR 로그인
         env:
@@ -108,7 +111,13 @@ jobs:
         run: |
           set -euo pipefail
           IMAGE="${IMAGE_PREFIX}-${{ matrix.name }}"
-          docker build -t "$IMAGE:latest" -t "$IMAGE:${{ github.sha }}" "${{ matrix.context }}"
+          # 프런트는 화면에 커밋 정보를 찍는다. 빌드 컨텍스트에 .git이 없어 여기서 넘긴다.
+          BUILD_ARGS=()
+          if [ "${{ matrix.name }}" = "frontend" ]; then
+            BUILD_ARGS+=(--build-arg "GIT_COMMIT_COUNT=$(git rev-list --count HEAD)")
+            BUILD_ARGS+=(--build-arg "GIT_SHA=$(git rev-parse --short HEAD)")
+          fi
+          docker build "${BUILD_ARGS[@]}" -t "$IMAGE:latest" -t "$IMAGE:${{ github.sha }}" "${{ matrix.context }}"
           docker push "$IMAGE:latest"
           docker push "$IMAGE:${{ github.sha }}"
 
@@ -137,6 +146,11 @@ jobs:
           EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
           GHCR_USER: ${{ github.actor }}
           GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # 답변 받기 제공자. 비어 있으면 서버 .env를 건드리지 않는다.
+          ANSWER_PROVIDER: ${{ secrets.ANSWER_PROVIDER }}
+          ANSWER_ENDPOINT: ${{ secrets.ANSWER_ENDPOINT }}
+          ANSWER_MODEL: ${{ secrets.ANSWER_MODEL }}
+          ANSWER_API_KEY: ${{ secrets.ANSWER_API_KEY }}
         run: |
           set -euo pipefail
           mkdir -p ~/.ssh
@@ -150,6 +164,13 @@ jobs:
           cd ~/secure-prompt-gateway
           git fetch --quiet origin main
           git reset --hard --quiet origin/main
+          # 답변 받기(UC-08) 제공자 설정. GitHub Secrets에 있으면 .env에 써넣고, 없으면
+          # 건드리지 않는다. 키는 GitHub → 이 stdin → .env 로만 흐르고 로그·ps에 남지 않는다.
+          upsert() { [ -n "\$2" ] || return 0; { grep -v "^\$1=" .env 2>/dev/null || true; echo "\$1=\$2"; } > .env.tmp && mv .env.tmp .env; }
+          upsert ANSWER_PROVIDER '$ANSWER_PROVIDER'
+          upsert ANSWER_ENDPOINT '$ANSWER_ENDPOINT'
+          upsert ANSWER_MODEL    '$ANSWER_MODEL'
+          upsert ANSWER_API_KEY  '$ANSWER_API_KEY'
           echo '$GHCR_TOKEN' | docker login ghcr.io -u '$GHCR_USER' --password-stdin
           docker compose pull
           docker compose up -d
