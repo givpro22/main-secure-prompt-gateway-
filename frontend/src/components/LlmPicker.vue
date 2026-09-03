@@ -88,14 +88,14 @@ onBeforeUnmount(() => {
   border: 0;
   background: transparent;
   font: inherit;
-  font-size: 11.5px;
+  font-size: 12.5px;
   color: var(--navy);
 }
 
 .trigger {
   padding: 4px 9px 4px 10px;
   border: 1px solid var(--border-strong);
-  border-radius: 999px;
+  border-radius: 5px;
   background: #fff;
 }
 
@@ -105,7 +105,7 @@ onBeforeUnmount(() => {
 
 .caret {
   color: var(--gray);
-  font-size: 9px;
+  font-size: 10px;
   transition: transform 140ms ease;
 }
 

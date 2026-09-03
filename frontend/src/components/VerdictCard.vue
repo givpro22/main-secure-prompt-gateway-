@@ -187,11 +187,11 @@ const summary = computed(() => {
 
 <style scoped>
 .verdict {
-  margin-top: 8px;
-  padding: 12px 14px;
+  margin-top: 10px;
+  padding: 16px 18px;
   border: 1px solid var(--border);
   border-left: 3px solid var(--gray);
-  border-radius: 6px;
+  border-radius: 8px;
   background: var(--card);
 }
 
@@ -217,6 +217,7 @@ const summary = computed(() => {
 
 .rule-count {
   font-weight: 700;
+  font-size: 15px;
 }
 
 .summary {
@@ -234,11 +235,11 @@ const summary = computed(() => {
 .rule {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
-  padding: 7px 0;
+  padding: 10px 0;
   border-bottom: 1px solid var(--border);
-  font-size: var(--font-caption);
+  font-size: 14px;
 }
 
 .code {
@@ -313,7 +314,7 @@ const summary = computed(() => {
 .sent-label {
   display: block;
   margin-bottom: 4px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.06em;
   color: var(--gray);
@@ -321,7 +322,7 @@ const summary = computed(() => {
 
 .sent-body {
   margin: 0;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.65;
 }
 
@@ -355,13 +356,13 @@ const summary = computed(() => {
 }
 
 .egress-btn {
-  border-radius: 999px;
+  border-radius: 5px;
   padding: 5px 13px;
   border: 0;
   background: var(--navy);
   color: #fff;
   font: inherit;
-  font-size: 11.5px;
+  font-size: 12.5px;
   font-weight: 600;
 }
 

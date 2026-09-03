@@ -32,9 +32,9 @@ const single = MODELS.length === 1 ? MODELS[0] : null
   gap: 7px;
   padding: 5px 11px;
   border: 1px solid var(--border-strong);
-  border-radius: 999px;
+  border-radius: 5px;
   background: #fff;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .dot {
@@ -56,8 +56,8 @@ const single = MODELS.length === 1 ? MODELS[0] : null
 .model-select {
   padding: 5px 10px;
   border: 1px solid var(--border-strong);
-  border-radius: 999px;
+  border-radius: 5px;
   font: inherit;
-  font-size: 12px;
+  font-size: 13px;
 }
 </style>

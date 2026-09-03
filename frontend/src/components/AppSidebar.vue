@@ -9,6 +9,7 @@
  * 만들 수 없고, 지금 화면에 있는 것만 보여준다 — 눌러도 아무것도 안 열리는 목록보다 낫다.
  */
 import { useRouter } from 'vue-router'
+import UserMenu from './UserMenu.vue'
 import { useSessionStore } from '../stores/session'
 import { useThreadStore } from '../stores/thread'
 import { STATUS_TERMS } from '../lib/terms'
@@ -103,9 +104,6 @@ function restoreDraft(text) {
 
 
 
-function onSelect(event) {
-  session.setCurrentUser(Number(event.target.value))
-}
 
 function newChat() {
   thread.clear()
@@ -183,13 +181,7 @@ function token(decision) {
     </div>
 
     <div class="account">
-      <label class="sr-only" for="account-select">계정 전환</label>
-      <span class="avatar" aria-hidden="true">{{ session.currentUser?.name?.[0] ?? '·' }}</span>
-      <select id="account-select" :value="session.currentUserId" @change="onSelect">
-        <option v-for="user in session.users" :key="user.userId" :value="user.userId">
-          {{ user.name }} · {{ user.department.name }}
-        </option>
-      </select>
+      <UserMenu />
     </div>
   </aside>
 </template>
@@ -198,12 +190,12 @@ function token(decision) {
 .sidebar {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  width: 236px;
+  gap: 16px;
+  width: 258px;
   flex: none;
   height: 100%;
-  overflow: hidden;
-  padding: 16px 14px;
+  overflow: visible;
+  padding: 18px 16px;
   background: var(--nav-bg);
   color: var(--nav-fg);
 }
@@ -223,7 +215,7 @@ function token(decision) {
   border-radius: 9px;
   background: var(--nav-bg-active);
   color: var(--nav-fg);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
 }
 
@@ -234,12 +226,12 @@ function token(decision) {
 }
 
 .name strong {
-  font-size: 14.5px;
+  font-size: 15.5px;
 }
 
 .name em {
   font-style: normal;
-  font-size: 11.5px;
+  font-size: 12.5px;
   color: var(--nav-muted);
 }
 
@@ -251,7 +243,7 @@ function token(decision) {
   background: var(--nav-bg-soft);
   color: var(--nav-fg);
   font: inherit;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
 }
 
@@ -266,11 +258,11 @@ function token(decision) {
 }
 
 .nav-item {
-  padding: 9px 11px;
+  padding: 10px 12px;
   border-radius: 8px;
   color: var(--nav-muted);
   text-decoration: none;
-  font-size: 13.5px;
+  font-size: 15px;
 }
 
 .nav-item:hover {
@@ -286,7 +278,7 @@ function token(decision) {
 
 .history h2 {
   margin: 6px 0 6px 4px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.08em;
   color: var(--nav-muted);
@@ -321,7 +313,7 @@ function token(decision) {
   background: transparent;
   color: var(--nav-muted);
   font: inherit;
-  font-size: 12.5px;
+  font-size: 13.5px;
   text-align: left;
 }
 
@@ -365,13 +357,13 @@ function token(decision) {
 
 .turns {
   flex: none;
-  font-size: 10.5px;
+  font-size: 11.5px;
   color: var(--nav-muted);
 }
 
 .demo {
   flex: none;
-  font-size: 10.5px;
+  font-size: 11.5px;
   color: var(--nav-line);
 }
 
@@ -384,37 +376,10 @@ function token(decision) {
 }
 
 .account {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  padding-top: 12px;
+  padding-top: 10px;
   border-top: 1px solid var(--nav-line);
 }
 
-.avatar {
-  display: grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  flex: none;
-  border-radius: 50%;
-  background: var(--nav-bg-active);
-  color: var(--nav-fg);
-  font-size: 12px;
-  font-weight: 700;
-}
-
-select {
-  flex: 1;
-  min-width: 0;
-  padding: 6px 6px;
-  border: 1px solid var(--nav-line);
-  border-radius: 7px;
-  background: var(--nav-bg-soft);
-  color: var(--nav-fg);
-  font: inherit;
-  font-size: 12.5px;
-}
 
 .sr-only {
   position: absolute;
