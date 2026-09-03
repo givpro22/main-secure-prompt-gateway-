@@ -39,6 +39,16 @@ const draft = ref('')
  */
 const started = computed(() => entries.value.length > 0)
 
+/*
+ * 전송하지 않은 입력은 사이드바 "작성 중"으로 넘어간다. 타이핑마다 스토어를 때리지
+ * 않도록 잠깐 멈췄을 때만 반영한다.
+ */
+let writingTimer = null
+watch(draft, (text) => {
+  clearTimeout(writingTimer)
+  writingTimer = setTimeout(() => thread.setWriting(text), 500)
+})
+
 // 사이드바의 "새 대화" — 대화를 비운다. 영속화가 없으므로 화면 상태만 지우면 된다.
 watch(
   () => thread.clearedAt,
@@ -49,16 +59,44 @@ watch(
   },
 )
 
-// 사이드바의 (demo) 이력. 완료된 대화는 그대로 태워서 답변까지 보이게 하고,
-// 작성 중 항목은 입력창만 복원한다.
+// 작성 중 항목 — 입력창만 복원한다.
 watch(
   () => thread.pendingDraft,
-  async (picked) => {
-    if (!picked) return
-    draft.value = picked.text
-    if (!picked.send) return
-    await nextTick()
-    if (!sending.value) send()
+  (picked) => {
+    if (picked) draft.value = picked.text
+  },
+)
+
+/*
+ * 데모 대화 열기. **지금 대화를 갈아끼운다** — 이어붙이면 서로 다른 세션의 판정이
+ * 한 흐름처럼 보이고 누를수록 쌓이기만 한다.
+ *
+ * 판정 객체를 심지 않고 문장을 차례로 태운다. 앞 턴이 끝나야 다음 턴을 보내므로
+ * 순서가 화면에 그대로 남는다 — 차단당하고 고쳐서 다시 보내는 흐름이 그 순서다.
+ */
+const replaying = ref(false)
+
+watch(
+  () => thread.pendingDemo,
+  async (demo) => {
+    if (!demo || replaying.value) return
+    replaying.value = true
+    entries.value = []
+    // 내 대화가 화면에서 내려갔으니 "이번 세션"도 비운다. 화면에 없는 것을 가리키면
+    // 사이드바가 거짓말을 한다.
+    thread.startSession()
+    banner.value = ''
+    try {
+      for (const prompt of demo.prompts) {
+        draft.value = prompt
+        await nextTick()
+        await send()
+      }
+    } finally {
+      draft.value = ''
+      thread.setWriting(null)
+      replaying.value = false
+    }
   },
 )
 const sending = ref(false)
@@ -115,11 +153,11 @@ async function send() {
      */
     draft.value = verdict.decision === 'BLOCK' ? text : ''
 
-    thread.push({
-      key: entry.key,
-      text: text.length > 26 ? `${text.slice(0, 26)}…` : text,
-      decision: verdict.decision,
-    })
+    // 보냈으니 더 이상 작성 중이 아니다.
+    thread.setWriting(null)
+    // "이번 세션"은 **직접 입력해 답변을 받은 것**만 센다. 데모 대화를 열어보는 것은
+    // 지난 대화를 훑는 행동이지 내가 이번에 한 일이 아니다.
+    if (!replaying.value) thread.addTurn(text, verdict.decision)
 
     if (verdict.decision === 'PENDING') startPolling(entry)
   } catch (err) {
@@ -169,8 +207,8 @@ function startPolling(entry) {
 }
 
 function applyInspection(entry, inspection) {
-  // 사이드바 점 색도 최종 판정을 따라간다.
-  if (inspection?.status) thread.updateDecision(entry.key, inspection.status)
+  // 담당자가 확정하면 대화 전체의 대표 판정도 따라 올라간다.
+  if (inspection?.status) thread.raiseDecision(inspection.status)
   entry.inspection = inspection
   entry.aiStatus = inspection.aiStatus
 }
@@ -223,15 +261,17 @@ function isHumanDecided(entry) {
 
       <article v-for="entry in entries" :id="`turn-${entry.key}`" :key="entry.key" class="turn">
         <!--
-          차단은 submittedText가 null이므로 작성자 본인의 입력값을 그린다 (D15).
-          나머지 상태는 서버가 돌려준 마스킹 적용본을 그린다.
-        -->
-        <MessageBubble
-          :text="entry.verdict.submittedText ?? entry.inputText"
-          :blocked="entry.verdict.decision === 'BLOCK'"
-        />
+          버블은 **작성자가 친 원문 그대로**다. 마스킹본을 여기 그리면 무엇을 물어봤는지
+          알아볼 수 없다 — 라벨로 바뀐 자리가 문장의 핵심일 때가 많다.
+          전송된 본문은 판정 카드가 따로 보여준다.
 
-        <VerdictCard :verdict="entry.verdict" />
+          이 값은 API가 아니라 FE 로컬 상태에서 온다. 원문 미표시 원칙(5.4)의 대상은
+          감사 콘솔에서 보는 타인의 원문이며, 작성자에게 자기 입력을 돌려주는 것은
+          유출이 아니다 (D15).
+        -->
+        <MessageBubble :text="entry.inputText" :blocked="entry.verdict.decision === 'BLOCK'" />
+
+        <VerdictCard :verdict="entry.verdict" :original-text="entry.inputText" />
 
         <!-- S5 검토 대기 -->
         <template v-if="entry.verdict.decision === 'PENDING'">
@@ -314,7 +354,8 @@ function isHumanDecided(entry) {
 .layout {
   display: flex;
   align-items: stretch;
-  min-height: calc(100vh - var(--header-h));
+  height: 100%;
+  min-height: 0;
 }
 
 .chat {
@@ -323,9 +364,12 @@ function isHumanDecided(entry) {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  width: 100%;
   max-width: 880px;
   margin: 0 auto;
-  padding: 20px 16px 24px;
+  padding: 20px 16px 20px;
+  height: 100%;
+  min-height: 0;
 }
 
 .thread {
@@ -334,8 +378,16 @@ function isHumanDecided(entry) {
   position: relative;
 }
 
+/* 대화가 쌓이면 스레드만 스크롤한다. 입력창과 캡션은 항상 보인다 */
 .chat.started .thread {
   flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.composer {
+  flex: none;
 }
 
 .empty {
