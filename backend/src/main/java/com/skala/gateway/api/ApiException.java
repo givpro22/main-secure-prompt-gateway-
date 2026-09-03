@@ -106,8 +106,86 @@ public class ApiException extends RuntimeException {
      * <p>규칙 판정은 사람이 번복하지 않는다 (기획서 4장). 사람이 확정하는 것은 AI 후보뿐이며,
      * 그 경계가 이 프로젝트의 핵심 설계 주장이다.
      */
+    /**
+     * 확정은 보안 담당자만 한다 (0.5.1 D24).
+     *
+     * <p>인증은 여전히 없다 — {@code X-User-Id}가 누구인지 말할 뿐 그 사람임을 증명하지
+     * 않는다. 그럼에도 역할을 확인하는 이유는, "AI는 제안하고 사람이 확정한다"에서
+     * 사람이 <b>아무나</b>가 아니기 때문이다. 화면에서만 버튼을 가리면 그 경계가 주장에
+     * 그친다.
+     */
+    public static ApiException notReviewer(Object userId) {
+        return new ApiException(HttpStatus.FORBIDDEN, "FORBIDDEN_ROLE",
+                "확정은 보안 담당자만 할 수 있습니다. 사용자 " + userId + "는 SECURITY_ADMIN이 아닙니다.");
+    }
+
     public static ApiException ruleFindingNotReviewable(Object findingId) {
         return new ApiException(HttpStatus.CONFLICT, "RULE_FINDING_NOT_REVIEWABLE",
                 "finding " + findingId + "는 규칙 판정이라 사람이 확정하지 않습니다.");
+    }
+
+    public static ApiException messageNotFound(Object messageId) {
+        return new ApiException(HttpStatus.NOT_FOUND, "MESSAGE_NOT_FOUND",
+                "message " + messageId + "를 찾을 수 없습니다.");
+    }
+
+    /**
+     * 해제 요청은 자기 프롬프트에만 건다 (D25).
+     *
+     * <p>남의 문장을 두고 원문을 열어 달라고 할 수는 없다. 이 요청이 원문 열람의 근거가
+     * 되므로, 근거를 만드는 사람과 문장을 쓴 사람이 같아야 한다.
+     */
+    public static ApiException notAuthor(Object messageId) {
+        return new ApiException(HttpStatus.FORBIDDEN, "FORBIDDEN_NOT_AUTHOR",
+                "해제 요청은 작성자만 할 수 있습니다. message " + messageId + "는 다른 사용자의 것입니다.");
+    }
+
+    /** 마스킹된 건에만 해제가 성립한다. 가린 것이 없으면 풀 것도 없다 */
+    public static ApiException notMasked(Object messageId) {
+        return new ApiException(HttpStatus.CONFLICT, "NOT_MASKED",
+                "message " + messageId + "는 마스킹된 건이 아니라 해제 요청 대상이 아닙니다.");
+    }
+
+    public static ApiException unmaskRequestExists(Object messageId) {
+        return new ApiException(HttpStatus.CONFLICT, "UNMASK_REQUEST_EXISTS",
+                "message " + messageId + "에는 이미 해제 요청이 있습니다.");
+    }
+
+    public static ApiException unmaskRequestNotFound(Object requestId) {
+        return new ApiException(HttpStatus.NOT_FOUND, "UNMASK_REQUEST_NOT_FOUND",
+                "해제 요청 " + requestId + "를 찾을 수 없습니다.");
+    }
+
+    /** 출력 검사는 나간 적 있는 프롬프트에만 붙는다. 차단된 건은 애초에 답변이 없다 */
+    public static ApiException notSent(Object messageId) {
+        return new ApiException(HttpStatus.CONFLICT, "NOT_SENT",
+                "message " + messageId + "는 전송되지 않아 검사할 답변이 없습니다.");
+    }
+
+    public static ApiException responseAlreadyInspected(Object messageId) {
+        return new ApiException(HttpStatus.CONFLICT, "RESPONSE_ALREADY_INSPECTED",
+                "message " + messageId + "의 답변은 이미 검사했습니다.");
+    }
+
+    /** 키가 없어 답변 받기가 꺼진 상태. 화면은 이걸 보고 붙여넣기 방식으로 물러난다 */
+    public static ApiException answerUnavailable() {
+        return new ApiException(HttpStatus.SERVICE_UNAVAILABLE, "ANSWER_UNAVAILABLE",
+                "답변 받기가 꺼져 있습니다. ANTHROPIC_API_KEY가 설정되지 않았습니다.");
+    }
+
+    public static ApiException answerFailed(String detail) {
+        return new ApiException(HttpStatus.BAD_GATEWAY, "ANSWER_FAILED",
+                "모델에서 답변을 받지 못했습니다. " + detail);
+    }
+
+    /** 모델이 답변을 거절했다. 오류가 아니라 결과다 — 그대로 보여주고 사람이 판단한다 */
+    public static ApiException answerRefused(String explanation) {
+        return new ApiException(HttpStatus.UNPROCESSABLE_ENTITY, "ANSWER_REFUSED",
+                "모델이 답변을 거절했습니다." + (explanation == null || explanation.isBlank() ? "" : " " + explanation));
+    }
+
+    public static ApiException unmaskAlreadyDecided(Object requestId, Object current) {
+        return new ApiException(HttpStatus.CONFLICT, "UNMASK_ALREADY_DECIDED",
+                "해제 요청 " + requestId + "는 이미 " + current + "로 확정되었습니다.");
     }
 }
