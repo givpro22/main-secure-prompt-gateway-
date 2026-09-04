@@ -54,11 +54,11 @@ SKALA AI 웹 서비스 설계 미니프로젝트 · 4반 5조. 역할명이 아�
 | | | |
 |---|---|---|
 | [왜 만들었나](#왜-만들었나) | [책임 경계](#규칙은-결정하고-ai는-제안하며-사람이-확정합니다) | [판정 4경로](#판정은-네-갈래로-갈립니다) |
-| [실제 서비스](#실제-서비스) | [화면 설계](#화면-설계--figma-목업-11장) | [아키텍처](#아키텍처) |
-| [비동기 검토](#ai가-늦어도-화면은-멈추지-않습니다) | [AI 검사기 성능](#ai-검사기는-얼마나-잡아내는가) | [데이터 모델](#데이터-모델) |
-| [API](#api) | [실행](#실행) | [배포와 CI/CD](#배포) |
-| [환경변수](#환경변수) | [데모 케이스](#데모-케이스) | [팀과 협업](#팀과-협업) |
-| [팀](#팀) | [로드맵](#로드맵) | [문서](#문서) |
+| [실제 서비스](#실제-서비스) | [시연 영상](#시연-영상) | [화면 설계](#화면-설계--figma-목업-11장) |
+| [아키텍처](#아키텍처) | [비동기 검토](#ai가-늦어도-화면은-멈추지-않습니다) | [AI 검사기 성능](#ai-검사기는-얼마나-잡아내는가) |
+| [데이터 모델](#데이터-모델) | [API](#api) | [실행](#실행) |
+| [배포와 CI/CD](#배포) | [환경변수](#환경변수) | [데모 케이스](#데모-케이스) |
+| [팀과 협업](#팀과-협업) | [로드맵](#로드맵) | [문서](#문서) |
 
 ---
 
@@ -159,6 +159,46 @@ SKALA AI 웹 서비스 설계 미니프로젝트 · 4반 5조. 역할명이 아�
 <sub>규칙이 확정한 finding에는 <code>확정(규칙)</code> 배지만 붙고 버튼이 없습니다. <b>ACCEPT / REJECT는 AI 후보에만 달립니다</b> — 정규식이 확정한 위반까지 재량으로 열면 통제 기록이 의미를 잃기 때문입니다.</sub>
 
 > 전체 캡처 목록과 각 화면이 증명하는 것은 [`docs/screenshots/README.md`](docs/screenshots/README.md)에 있습니다.
+
+## 시연 영상
+
+배포본을 실제로 조작해 녹화한 여섯 편이다. 클릭 없이 바로 돌아간다. 원본 화질은 각 항목의 `mp4` 링크에 있다.
+
+### 판정 네 갈래
+
+<table>
+<tr>
+<td width="50%"><img src="docs/demo/01-allow.gif" alt="기본 통과"></td>
+<td width="50%"><img src="docs/demo/02-block-then-fix.gif" alt="차단 후 수정해서 통과"></td>
+</tr>
+<tr>
+<td><b>기본 통과</b> — 규칙에 걸리지 않으면 원문 그대로 나가고 답변이 돌아온다. <a href="docs/demo/01-allow.mp4">mp4</a></td>
+<td><b>차단 후 수정해서 통과</b> — 막고 끝내지 않는다. 무엇이 걸렸는지 알려주고, 고쳐서 다시 보내면 통과한다. <a href="docs/demo/02-block-then-fix.mp4">mp4</a></td>
+</tr>
+<tr>
+<td><img src="docs/demo/03-dept-policy-diff.gif" alt="부서별 정책 차이"></td>
+<td><img src="docs/demo/04-embargo.gif" alt="엠바고 차단과 해제"></td>
+</tr>
+<tr>
+<td><b>부서별 정책 차이</b> — <b>같은 문장인데 부서가 다르면 결과가 갈린다.</b> 이 프로젝트의 핵심 장면이다. <a href="docs/demo/03-dept-policy-diff.mp4">mp4</a></td>
+<td><b>엠바고 차단·해제</b> — 같은 표현이 해제일 전에는 차단, 지난 뒤에는 통과. 부서로 갈리는 것을 시간 축에서 한 번 더 한다. <a href="docs/demo/04-embargo.mp4">mp4</a></td>
+</tr>
+</table>
+
+### 사람이 개입하는 두 자리
+
+<table>
+<tr>
+<td width="50%"><img src="docs/demo/05-unmask-request.gif" alt="오탐 마스킹 해제 요청"></td>
+<td width="50%"><img src="docs/demo/06-output-recheck.gif" alt="답변 재검사"></td>
+</tr>
+<tr>
+<td><b>오탐 마스킹 해제 요청</b> — 부품 코드를 전화번호로 오탐했다. 직원이 해제를 요청하고 담당자가 승인한다. 규칙이 틀렸을 때 사람이 되돌리는 경로다. <a href="docs/demo/05-unmask-request.mp4">mp4</a></td>
+<td><b>답변 재검사</b> — 나갈 때 통과한 프롬프트라도 <b>돌아온 답변</b>에서 다시 걸릴 수 있다. 입력만 보던 게이트웨이가 출력도 본다. <a href="docs/demo/06-output-recheck.mp4">mp4</a></td>
+</tr>
+</table>
+
+> 여섯 편의 표와 재생성 방법은 [`docs/demo/README.md`](docs/demo/README.md)에 있다.
 
 ## 화면 설계 — Figma 목업 11장
 
@@ -567,6 +607,7 @@ GATEWAY_EMBARGO_REFERENCE_DATE=2026-09-04 ./gradlew bootRun
 |---|---|
 | [`docs/presentation.pdf`](docs/presentation.pdf) | **발표자료 31장.** 이 README의 도해가 나온 원본 |
 | [`docs/slides/`](docs/slides/) | 위 발표자료에서 뽑은 장면 18장 (PNG) |
+| [`docs/demo/`](docs/demo/) | 시연 영상 6편 (GIF + mp4) |
 | [`docs/screenshots/`](docs/screenshots/) | 배포본 실제 화면 캡처 7장 |
 | [`docs/figma-mockups/`](docs/figma-mockups/) | 구현 전에 그린 화면 설계본 11장 (SVG + PNG) |
 | [`docs/api-spec.md`](docs/api-spec.md) · [`docs/ai-gateway-v1.postman_collection.json`](docs/ai-gateway-v1.postman_collection.json) | API 명세와 실행 가능한 컬렉션 |
