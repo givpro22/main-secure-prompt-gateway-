@@ -1,6 +1,8 @@
 package com.skala.gateway.api;
 
 import com.skala.gateway.api.dto.ErrorResponse;
+import com.skala.gateway.domain.enums.InspectionPhase;
+import java.util.Locale;
 import com.skala.gateway.domain.enums.MessageStatus;
 import com.skala.gateway.service.InspectionService;
 import java.time.OffsetDateTime;
@@ -47,12 +49,14 @@ public class InspectionController {
     @GetMapping("/inspections")
     public ResponseEntity<?> list(@RequestParam(required = false) String deptId,
                                   @RequestParam(required = false) String status,
+                                  @RequestParam(required = false) String phase,
                                   @RequestParam(required = false) String from,
                                   @RequestParam(required = false) String to,
                                   @RequestParam(required = false) String page,
                                   @RequestParam(required = false) String size) {
         Long parsedDeptId;
         MessageStatus parsedStatus;
+        InspectionPhase parsedPhase;
         OffsetDateTime parsedFrom;
         OffsetDateTime parsedTo;
         int parsedPage;
@@ -60,6 +64,7 @@ public class InspectionController {
         try {
             parsedDeptId = QueryParams.optionalLong(deptId);
             parsedStatus = parseStatus(status);
+            parsedPhase = parsePhase(phase);
             parsedFrom = QueryParams.optionalTime(from);
             parsedTo = QueryParams.optionalTime(to);
             parsedPage = QueryParams.intOrDefault(page, DEFAULT_PAGE);
@@ -74,7 +79,7 @@ public class InspectionController {
         }
 
         return ResponseEntity.ok(inspectionService.list(
-                parsedDeptId, parsedStatus, parsedFrom, parsedTo, parsedPage, parsedSize));
+                parsedDeptId, parsedStatus, parsedPhase, parsedFrom, parsedTo, parsedPage, parsedSize));
     }
 
     /** 판정 상세. 202 이후 FE 폴링이 이 엔드포인트를 {@code aiStatus}가 끝날 때까지 호출한다. */
@@ -95,4 +100,17 @@ public class InspectionController {
             throw new IllegalArgumentException("status는 ALLOWED/MASKED/BLOCKED/PENDING_REVIEW 중 하나여야 합니다: " + raw);
         }
     }
+
+    /** {@code phase}는 INPUT/OUTPUT 2값이다. enum 밖의 값은 400 — 조용히 무시하면 필터가 안 먹는다. */
+    private static InspectionPhase parsePhase(String raw) {
+        if (raw == null || raw.isBlank()) {
+            return null;
+        }
+        try {
+            return InspectionPhase.valueOf(raw.trim().toUpperCase(Locale.ROOT));
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("phase는 INPUT/OUTPUT 중 하나여야 합니다: " + raw);
+        }
+    }
+
 }

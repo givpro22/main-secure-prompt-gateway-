@@ -526,6 +526,9 @@ export function createFixtureState() {
     settleAi(inspection)
     return {
       inspectionId: inspection.inspectionId,
+      // 같은 메시지의 INPUT·OUTPUT 두 행을 화면에서 묶는 열쇠 (BE InspectionSummaryDto와 같은 봉투)
+      messageId: inspection.messageId,
+      phase: inspection.phase ?? 'INPUT',
       createdAt: inspection.createdAt,
       department: inspection.user.department,
       userName: inspection.user.name,
@@ -849,6 +852,8 @@ export function fixtureServer() {
               items = items.filter((r) => r.department === name)
             }
             if (status) items = items.filter((r) => r.status === status)
+            const phase = query.get('phase')
+            if (phase) items = items.filter((r) => r.phase === phase)
             if (from) items = items.filter((r) => r.createdAt >= from)
             if (to) items = items.filter((r) => r.createdAt < to)
             items.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))

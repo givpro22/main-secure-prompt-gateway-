@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -20,7 +19,7 @@ import org.springframework.web.client.RestClientException;
  * 그쪽은 JSON 스키마를 강제하는 판정 호출이고 여기는 자유 답변이다.
  */
 @Component
-@ConditionalOnProperty(name = "answer.provider", havingValue = "ollama")
+@ConditionalOnAnswerProvider(AnswerProviders.OLLAMA)
 public class OllamaAnswerClient implements AnswerClient {
 
     private static final Logger log = LoggerFactory.getLogger(OllamaAnswerClient.class);

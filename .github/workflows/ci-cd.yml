@@ -124,7 +124,17 @@ jobs:
   deploy:
     name: EC2 배포
     needs: images
-    if: github.ref == 'refs/heads/main'
+    # main 푸시 자동 배포를 잠가 두었다 (2026-09-04).
+    #
+    # 이유: 배포본 프런트엔드가 main보다 앞서 있다. 감사 콘솔의 답변(OUTPUT) 하위 행과
+    # 답변 재검사 UI가 EC2의 빌드 산출물에만 있고 저장소 어디에도 소스가 없다 —
+    # CI가 #116부터 죽어 자동 배포가 멈춘 사이 누군가 로컬에서 수동 배포한 결과다.
+    # 이 상태에서 main을 배포하면 라이브 화면이 그 UI를 잃는다.
+    #
+    # 그동안은 Actions 탭의 Run workflow(workflow_dispatch)로만 배포한다.
+    # 프런트 작업분이 main에 올라오면 아래 조건을 원래대로 되돌린다:
+    #   if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       contents: read
