@@ -1,5 +1,6 @@
 package com.skala.gateway.service;
 
+import com.skala.gateway.ai.AiAssessment;
 import com.skala.gateway.ai.AiInspectionRequest;
 import com.skala.gateway.ai.AiInspectionRunner;
 import com.skala.gateway.api.dto.InspectionDetailResponse;
@@ -17,6 +18,7 @@ import com.skala.gateway.domain.enums.AiStatus;
 import com.skala.gateway.domain.enums.DecidedBy;
 import com.skala.gateway.domain.enums.FinalDecision;
 import com.skala.gateway.domain.enums.MessageStatus;
+import com.skala.gateway.domain.enums.PolicyCategory;
 import com.skala.gateway.domain.repository.AppUserRepository;
 import com.skala.gateway.domain.repository.InspectionFindingRepository;
 import com.skala.gateway.domain.repository.InspectionRepository;
@@ -52,6 +54,9 @@ public class InspectionService {
     /** 감사 목록 페이지 크기 상한 (계약서 §1-6). 초과 요청은 거부하지 않고 절삭한다. */
     public static final int MAX_PAGE_SIZE = 100;
 
+    /** 유출 후보에 카테고리가 없을 때의 기본값. 출력 유출은 기밀 축으로 본다 */
+    private static final PolicyCategory DEFAULT_AI_CATEGORY = PolicyCategory.CONFIDENTIAL;
+
     private final AppUserRepository appUserRepository;
     private final MessageRepository messageRepository;
     private final InspectionRepository inspectionRepository;
@@ -59,6 +64,7 @@ public class InspectionService {
     private final PolicyService policyService;
     private final RuleEngine ruleEngine;
     private final AiInspectionRunner aiInspectionRunner;
+    private final AnswerLeakService answerLeakService;
     private final int pollAfterMs;
 
     public InspectionService(AppUserRepository appUserRepository,
@@ -68,6 +74,7 @@ public class InspectionService {
                              PolicyService policyService,
                              RuleEngine ruleEngine,
                              AiInspectionRunner aiInspectionRunner,
+                             AnswerLeakService answerLeakService,
                              @Value("${gateway.polling.interval-ms}") int pollAfterMs) {
         this.appUserRepository = appUserRepository;
         this.messageRepository = messageRepository;
@@ -76,6 +83,7 @@ public class InspectionService {
         this.policyService = policyService;
         this.ruleEngine = ruleEngine;
         this.aiInspectionRunner = aiInspectionRunner;
+        this.answerLeakService = answerLeakService;
         this.pollAfterMs = pollAfterMs;
     }
 
@@ -166,21 +174,41 @@ public class InspectionService {
 
         PolicyService.PolicyContext context = policyService.loadForDecision(user.getDepartment().getDeptId());
         EngineVerdict verdict = ruleEngine.evaluate(text, context.rules());
-        FinalDecision decision = verdict.decision();
-        boolean pending = decision == FinalDecision.PENDING;
+        FinalDecision ruleDecision = verdict.decision();
 
-        message.recordResponse(text, decision == FinalDecision.BLOCK ? null : verdict.maskedText());
+        message.recordResponse(text, ruleDecision == FinalDecision.BLOCK ? null : verdict.maskedText());
+
+        // 규칙이 통과시킨 답변을 한 번 더 본다. 규칙은 답변에 무엇이 "들어 있는지"만 보고,
+        // 유출 검사기는 그것이 프롬프트에서 가렸던 값인지 사내 코드 조각인지를 본다 —
+        // 답변 단독으로는 멀쩡해 보이는 문장이 프롬프트와 짝지어야 위험해지는 자리다.
+        //
+        // BLOCK이면 부르지 않는다. 이미 본문을 남기지 않기로 한 답변에 검사를 더 돌릴 이유가 없다.
+        //
+        // 입력 검사와 달리 동기다. 입력은 전송 전이라 사람을 기다리게 할 수 있지만, 답변은
+        // 이미 만들어져 있어 폴링을 걸면 화면만 늦어진다. 검사기 셋 다 결정론적이라 빠르다.
+        AiAssessment leak = ruleDecision == FinalDecision.BLOCK ? null
+                : answerLeakService.check(message.getOriginalText(), message.getSubmittedText(),
+                        text, user.getDepartment().getCode());
+        boolean pending = ruleDecision == FinalDecision.PENDING
+                || (leak != null && leak.reviewRequired());
+
+        // BLOCK은 무엇이 더 나와도 BLOCK이다. 나머지는 검토가 필요하면 PENDING으로 올린다.
+        FinalDecision decision = ruleDecision == FinalDecision.BLOCK ? FinalDecision.BLOCK
+                : pending ? FinalDecision.PENDING : ruleDecision;
 
         Inspection inspection = new Inspection(
                 message,
                 InspectionPhase.OUTPUT,
                 context.snapshot(),
                 verdict.ruleResult(),
-                pending ? AiStatus.PENDING : AiStatus.SKIPPED,
+                // 유출 검사가 이 자리에서 끝났으므로 PENDING으로 두지 않는다. PENDING은
+                // "아직 안 돌았다"는 뜻이고, 그러면 FE 폴링이 끝나지 않는다 (계약서 §1-5).
+                leak == null ? AiStatus.SKIPPED : AiStatus.COMPLETED,
                 decision,
                 pending ? null : DecidedBy.RULE);
-        if (!pending) {
-            inspection.setCompletedAt(OffsetDateTime.now());
+        inspection.setCompletedAt(OffsetDateTime.now());
+        if (leak != null) {
+            inspection.setAiResult(leak);
         }
         inspectionRepository.save(inspection);
 
@@ -188,13 +216,14 @@ public class InspectionService {
             findingRepository.save(InspectionFinding.ofRule(
                     inspection, hit.rule(), hit.category(), hit.spanStart(), hit.spanEnd()));
         }
-
-        if (pending) {
-            scheduleAiInspection(inspection, user, verdict, context);
+        for (AiAssessment.RiskCandidate candidate : candidatesOf(leak)) {
+            findingRepository.save(InspectionFinding.ofAi(
+                    inspection, candidate.code(), aiCategory(candidate),
+                    candidate.rationale(), candidate.evidence()));
         }
 
-        log.info("출력 검사 messageId={} decision={} 규칙={}건",
-                messageId, decision, verdict.findings().size());
+        log.info("출력 검사 messageId={} decision={} 규칙={}건 유출후보={}건",
+                messageId, decision, verdict.findings().size(), candidatesOf(leak).size());
         return ResponseVerdictResponse.of(message, inspection, pending ? pollAfterMs : null);
     }
 
@@ -235,10 +264,11 @@ public class InspectionService {
      */
     @Transactional(readOnly = true)
     public PageEnvelope<InspectionSummaryDto> list(Long deptId, MessageStatus status,
+                                                  InspectionPhase phase,
                                                    OffsetDateTime from, OffsetDateTime to,
                                                    int page, int size) {
         Page<Inspection> found = inspectionRepository.findAll(
-                InspectionSpecs.of(deptId, status, from, to),
+                InspectionSpecs.of(deptId, status, phase, from, to),
                 PageRequest.of(page, Math.min(size, MAX_PAGE_SIZE), InspectionSpecs.DEFAULT_SORT));
 
         Map<Long, Long> ruleCounts = ruleCounts(found.getContent().stream()
@@ -272,4 +302,30 @@ public class InspectionService {
             case PENDING -> MessageStatus.PENDING_REVIEW;
         };
     }
+
+    /** 유출 검사가 돌지 않았거나 후보가 없으면 빈 목록. 널 검사를 호출부마다 반복하지 않는다. */
+    private static List<AiAssessment.RiskCandidate> candidatesOf(AiAssessment assessment) {
+        if (assessment == null || assessment.riskCandidates() == null) {
+            return List.of();
+        }
+        return assessment.riskCandidates();
+    }
+
+    /**
+     * 후보 카테고리 문자열 → enum. 스키마 밖의 값이 와도 후보를 버리지 않는다 —
+     * 후보를 잃는 것이 카테고리가 틀린 것보다 나쁘다 ({@code InspectionAiResultSink}와 같은 규칙).
+     */
+    private static PolicyCategory aiCategory(AiAssessment.RiskCandidate candidate) {
+        if (candidate.category() == null) {
+            return DEFAULT_AI_CATEGORY;
+        }
+        try {
+            return PolicyCategory.valueOf(candidate.category());
+        } catch (IllegalArgumentException e) {
+            log.warn("유출 후보 {}의 category가 9.4 스키마 밖의 값입니다: {} — {}로 저장합니다",
+                    candidate.code(), candidate.category(), DEFAULT_AI_CATEGORY);
+            return DEFAULT_AI_CATEGORY;
+        }
+    }
+
 }

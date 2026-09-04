@@ -9,7 +9,6 @@ import java.util.Locale;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -27,7 +26,7 @@ import org.springframework.web.client.RestClientResponseException;
  * 된다. Claude만 공식 SDK를 쓰는 이유는 응답 구조(거절 사유 등)가 달라서다.
  */
 @Component
-@ConditionalOnProperty(name = "answer.provider", havingValue = "openai")
+@ConditionalOnAnswerProvider(AnswerProviders.OPENAI)
 public class OpenAiCompatibleAnswerClient implements AnswerClient {
 
     private static final Logger log = LoggerFactory.getLogger(OpenAiCompatibleAnswerClient.class);

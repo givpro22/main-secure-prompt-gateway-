@@ -12,7 +12,6 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
@@ -31,7 +30,7 @@ import org.springframework.stereotype.Component;
  * 않았다 — 거절이면 그대로 거절로 돌려주고 사람이 본다.
  */
 @Component
-@ConditionalOnProperty(name = "answer.provider", havingValue = "claude", matchIfMissing = true)
+@ConditionalOnAnswerProvider(AnswerProviders.CLAUDE)
 public class ClaudeAnswerClient implements AnswerClient {
 
     private static final Logger log = LoggerFactory.getLogger(ClaudeAnswerClient.class);

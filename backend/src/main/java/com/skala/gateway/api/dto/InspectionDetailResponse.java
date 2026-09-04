@@ -60,7 +60,7 @@ public record InspectionDetailResponse(
                 message.getMessageId(),
                 inspection.getPhase(),
                 InspectionUser.from(message.getUser()),
-                message.getSubmittedText(),
+                bodyUnderReview(inspection),
                 message.getStatus(),
                 inspection.getPolicySnapshot(),
                 inspection.getRuleResult(),
@@ -73,4 +73,20 @@ public record InspectionDetailResponse(
                 ApiTimes.utc(inspection.getCreatedAt()),
                 ApiTimes.utc(inspection.getCompletedAt()));
     }
+
+    /**
+     * 담당자가 보는 본문. 검사 단계에 따라 다른 칸을 읽는다 — INPUT은 나간 프롬프트,
+     * OUTPUT은 돌아온 답변이다. 둘 다 <b>마스킹본</b>이며 원문은 어느 쪽에서도 나가지 않는다.
+     *
+     * <p>한 메시지에 검사가 둘 붙으므로(`inspection.phase`) 이 구분이 없으면 답변 검사 행에
+     * 프롬프트가 실린다. 담당자는 답변을 보고 확정해야 하는데 프롬프트를 보게 된다.
+     */
+    static String bodyUnderReview(Inspection inspection) {
+        Message message = inspection.getMessage();
+        if (inspection.getPhase() == InspectionPhase.OUTPUT) {
+            return message.getResponseMasked();
+        }
+        return message.getSubmittedText();
+    }
+
 }
