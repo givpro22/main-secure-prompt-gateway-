@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 계약을 바꾸는 변경
+    url: https://github.com/givpro22/main-secure-prompt-gateway-/blob/main/_workspace/01_api-ai-architect_contract-freeze.md
+    about: 필드명·enum·상태 코드를 바꾸려면 계약 확정본을 먼저 읽으세요. 코드가 이 문서와 어긋나면 코드가 틀린 것입니다.
