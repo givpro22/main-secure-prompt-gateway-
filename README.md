@@ -568,6 +568,7 @@ GATEWAY_EMBARGO_REFERENCE_DATE=2026-09-04 ./gradlew bootRun
 | [`docs/presentation.pdf`](docs/presentation.pdf) | **발표자료 31장.** 이 README의 도해가 나온 원본 |
 | [`docs/slides/`](docs/slides/) | 위 발표자료에서 뽑은 장면 18장 (PNG) |
 | [`docs/screenshots/`](docs/screenshots/) | 배포본 실제 화면 캡처 7장 |
+| [`docs/github/`](docs/github/) | GitHub 활용 캡처 5장과 숫자 (이슈·Projects·Actions) |
 | [`docs/figma-mockups/`](docs/figma-mockups/) | 구현 전에 그린 화면 설계본 11장 (SVG + PNG) |
 | [`docs/api-spec.md`](docs/api-spec.md) · [`docs/ai-gateway-v1.postman_collection.json`](docs/ai-gateway-v1.postman_collection.json) | API 명세와 실행 가능한 컬렉션 |
 | [`docs/erd.png`](docs/erd.png) | ERD 이미지 (테이블 10개 · `V1`~`V7` 기준) |
