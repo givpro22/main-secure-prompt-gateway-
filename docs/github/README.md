@@ -1,17 +1,28 @@
 # GitHub 활용 — 발표용 도해와 캡처
 
-## 슬라이드 한 장짜리 도해
+## 슬라이드용 그림 두 장
+
+두 장 다 1920×1080 · 2배율이고, 발표자료와 같은 배경색(`#F8F6F0`)·같은 하단 밴드(`#3A4C5C`)를 쓴다. 슬라이드 사이에 끼워도 남의 장표로 보이지 않는다.
+
+### 1. `evidence.png` — 브랜치·이슈·프로젝트, 실제 화면
+
+![브랜치·이슈·프로젝트](evidence.png)
+
+**"잘 썼다"를 보여주려면 이쪽이다.** 세 축을 나란히 두고 칸마다 진짜 저장소 화면을 박았다. 브랜치 이름(`feat/` · `fix/` · `docs/` · `ci/` · `chore/` · `test/`), 역할 라벨이 붙은 이슈 목록과 `Open 4 / Closed 47`, 담당자와 Status가 선 보드. 통짜 캡처를 올리면 슬라이드에서 글씨가 안 보이므로 `crops/`에 의미 있는 영역만 잘라 두고 그걸 다시 박스에 맞춰 잘라 쓴다.
+
+### 2. `workflow.png` — 한 바퀴 도는 순서
 
 ![GitHub 활용](workflow.png)
 
-`workflow.png` (1920×1080, 2배율). PPT 한 페이지에 그대로 넣으면 된다. 발표자료와 같은 배경색(`#F8F6F0`)·같은 하단 밴드(`#3A4C5C`)를 쓴다.
+화면이 아니라 **순서**를 말하는 판이다. 이슈에서 열고 브랜치로 갈라 PR로 돌아오고 검증이 막아서고 보드에 남는다 — 다섯 칸이 그 한 바퀴이고 칸마다 실제 숫자가 붙어 있다. 하단 밴드는 그 51바퀴를 넷이 어떻게 나눠 가졌는지다.
 
-캡처를 여러 장 붙이는 대신 이 한 장을 쓰는 이유는, 보여줄 것이 화면이 아니라 **순서**이기 때문이다. 이슈에서 열고 브랜치로 갈라 PR로 돌아오고 검증이 막아서고 보드에 남는다 — 다섯 칸이 그 한 바퀴이고 칸마다 실제 숫자가 붙어 있다. 하단 밴드는 그 51바퀴를 넷이 어떻게 나눠 가졌는지다.
+### 다시 만들기
 
-숫자를 고칠 일이 생기면 `build.mjs`의 `STEPS`·`FOOT` 배열만 손대고 다시 만든다.
+숫자를 고칠 일이 생기면 `build.mjs`의 `STEPS`·`FOOT`, `build-evidence.mjs`의 `PANELS`만 손대면 된다. 캡처를 새로 찍었으면 `crops/`의 파일을 갈아 끼우고 `PANELS`의 `iw`·`ih`(원본 크기)와 `offX`(어느 쪽 끝을 보일지)를 맞춘다.
 
 ```bash
 node docs/github/build.mjs
+node docs/github/build-evidence.mjs
 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --disable-gpu \
   --hide-scrollbars --force-device-scale-factor=2 --default-background-color=F8F6F0 \
   --window-size=1920,1080 --screenshot=docs/github/workflow.png \
@@ -34,7 +45,7 @@ node docs/github/build.mjs
 | `04_actions.jpg` | Actions 실행 이력. PR마다 검증이 돌고 main 머지마다 파이프라인이 도는 것 |
 | `05_contributors.jpg` | 사람별 커밋 수와 코드 증감 |
 
-**한 장만 쓴다면 `01_issue_detail.jpg`다.** 이슈 하나에 역할·라벨·보드·PR이 전부 걸려 있어서 사슬 전체가 한 화면에 들어간다.
+슬라이드에 넣을 것은 위의 그림 둘이고, 이 5장은 질문이 들어왔을 때 열어 보여줄 원본이다. **한 장만 고르면 `01_issue_detail.jpg`다.** 이슈 하나에 역할·라벨·보드·PR이 전부 걸려 있어서 사슬 전체가 한 화면에 들어간다.
 
 ## 숫자
 
