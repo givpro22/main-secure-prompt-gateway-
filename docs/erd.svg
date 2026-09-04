@@ -1,0 +1,418 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1940" height="1330" viewBox="0 0 1940 1330">
+<style>
+  text { font-family: "Apple SD Gothic Neo", "Noto Sans KR", system-ui, sans-serif; fill: #16202E; }
+  .title { font-size: 25px; font-weight: 700; letter-spacing: -0.4px; }
+  .sub { font-size: 13px; fill: #6B7280; }
+  .legend { font-size: 12px; fill: #6B7280; }
+  .tname { font-size: 14.5px; font-weight: 700; fill: #fff; font-family: "SF Mono", Menlo, monospace; }
+  .tnote { font-size: 10.5px; fill: #fff; opacity: 0.72; }
+  .col  { font-size: 12px; font-family: "SF Mono", Menlo, monospace; }
+  .col.key { font-weight: 700; }
+  .type { font-size: 10.5px; fill: #6B7280; font-family: "SF Mono", Menlo, monospace; }
+  .badge { font-size: 8.5px; font-weight: 700; fill: #fff; font-family: "SF Mono", Menlo, monospace; }
+  .card { font-size: 11.5px; font-weight: 700; fill: #2F5D8A; font-family: "SF Mono", Menlo, monospace; }
+  .elabel { font-size: 10.5px; fill: #2F5D8A; }
+  .note { font-size: 11.5px; fill: #6B7280; }
+  .noteb { font-size: 11.5px; fill: #16202E; font-weight: 700; }
+</style>
+<rect width="1940" height="1330" fill="#fff"/>
+
+<text x="60" y="38" class="title">ERD — 사내 생성형 AI 게이트웨이</text>
+<text x="470" y="38" class="sub">테이블 10종 · 마이그레이션 V1~V7 기준 · 2026-09-03</text>
+<g transform="translate(60, 60)">
+<rect x="0" y="0" width="12" height="12" rx="2.5" fill="#2F5D8A"/>
+<text x="18" y="10" class="legend">조직·계정</text>
+<rect x="132" y="0" width="12" height="12" rx="2.5" fill="#5B4B8A"/>
+<text x="150" y="10" class="legend">정책</text>
+<rect x="264" y="0" width="12" height="12" rx="2.5" fill="#2E7D5B"/>
+<text x="282" y="10" class="legend">판정 기록</text>
+<rect x="396" y="0" width="12" height="12" rx="2.5" fill="#B7791F"/>
+<text x="414" y="10" class="legend">사람 개입</text>
+<rect x="528" y="0" width="12" height="12" rx="2.5" fill="#6B7280"/>
+<text x="546" y="10" class="legend">참조 데이터</text>
+<rect x="680" y="-1" width="19" height="13" rx="2.5" fill="#B7791F"/><text x="689.5" y="8.5" class="badge" text-anchor="middle">PK</text>
+<text x="703" y="10" class="legend">기본키</text>
+<rect x="753" y="-1" width="19" height="13" rx="2.5" fill="#2F5D8A"/><text x="762.5" y="8.5" class="badge" text-anchor="middle">FK</text>
+<text x="776" y="10" class="legend">외래키</text>
+<rect x="826" y="-1" width="13" height="13" rx="2.5" fill="#6B7280"/><text x="832.5" y="8.5" class="badge" text-anchor="middle">U</text>
+<text x="843" y="10" class="legend">UNIQUE</text>
+<rect x="929" y="-1" width="13" height="13" rx="2.5" fill="#5B4B8A"/><text x="935.5" y="8.5" class="badge" text-anchor="middle">J</text>
+<text x="946" y="10" class="legend">JSONB</text>
+</g>
+
+<path d="M 550 248 V 620" fill="none" stroke="#2F5D8A" stroke-width="1.4" opacity="0.75"/>
+<text x="559" y="268" class="card" text-anchor="middle">1</text>
+<text x="559" y="608" class="card" text-anchor="middle">N</text>
+<rect x="523.65" y="425" width="52.699999999999996" height="15" rx="3" fill="#fff" opacity="0.94"/>
+<text x="550" y="436.5" class="elabel" text-anchor="middle">dept_id</text>
+<path d="M 740 193.5 H 820" fill="none" stroke="#2F5D8A" stroke-width="1.4" opacity="0.75"/>
+<text x="756" y="187.5" class="card" text-anchor="middle">1</text>
+<text x="804" y="187.5" class="card" text-anchor="middle">N</text>
+<rect x="753.65" y="184.5" width="52.699999999999996" height="15" rx="3" fill="#fff" opacity="0.94"/>
+<text x="780" y="196" class="elabel" text-anchor="middle">dept_id</text>
+<path d="M 1200 193.5 H 1120" fill="none" stroke="#2F5D8A" stroke-width="1.4" opacity="0.75"/>
+<text x="1184" y="187.5" class="card" text-anchor="middle">1</text>
+<text x="1136" y="187.5" class="card" text-anchor="middle">N</text>
+<rect x="1127.55" y="184.5" width="64.9" height="15" rx="3" fill="#fff" opacity="0.94"/>
+<text x="1160" y="196" class="elabel" text-anchor="middle">policy_id</text>
+<path d="M 1500 193.5 H 1580" fill="none" stroke="#2F5D8A" stroke-width="1.4" opacity="0.75"/>
+<text x="1516" y="187.5" class="card" text-anchor="middle">1</text>
+<text x="1564" y="187.5" class="card" text-anchor="middle">N</text>
+<rect x="1507.55" y="184.5" width="64.9" height="15" rx="3" fill="#fff" opacity="0.94"/>
+<text x="1540" y="196" class="elabel" text-anchor="middle">policy_id</text>
+<path d="M 1350 150 V 118 H 630 V 150" fill="none" stroke="#2F5D8A" stroke-width="1.4" stroke-dasharray="5 3" opacity="0.75"/>
+<text x="1359" y="138" class="card" text-anchor="middle">0..N</text>
+<text x="639" y="138" class="card" text-anchor="middle">1</text>
+<rect x="920.95" y="109" width="138.1" height="15" rx="3" fill="#fff" opacity="0.94"/>
+<text x="990" y="120.5" class="elabel" text-anchor="middle">owner_dept_id · 만든 부서</text>
+<path d="M 740 663.5 H 820" fill="none" stroke="#2F5D8A" stroke-width="1.4" opacity="0.75"/>
+<text x="756" y="657.5" class="card" text-anchor="middle">1</text>
+<text x="804" y="657.5" class="card" text-anchor="middle">N</text>
+<rect x="753.65" y="654.5" width="52.699999999999996" height="15" rx="3" fill="#fff" opacity="0.94"/>
+<text x="780" y="666" class="elabel" text-anchor="middle">user_id</text>
+<path d="M 1120 663.5 H 1200" fill="none" stroke="#2F5D8A" stroke-width="1.4" opacity="0.75"/>
+<text x="1136" y="657.5" class="card" text-anchor="middle">1</text>
+<text x="1184" y="657.5" class="card" text-anchor="middle">1</text>
+<rect x="1124.5" y="654.5" width="71" height="15" rx="3" fill="#fff" opacity="0.94"/>
+<text x="1160" y="666" class="elabel" text-anchor="middle">message_id</text>
+<path d="M 1500 663.5 H 1580" fill="none" stroke="#2F5D8A" stroke-width="1.4" opacity="0.75"/>
+<text x="1516" y="657.5" class="card" text-anchor="middle">1</text>
+<text x="1564" y="657.5" class="card" text-anchor="middle">N</text>
+<rect x="1495.35" y="654.5" width="89.3" height="15" rx="3" fill="#fff" opacity="0.94"/>
+<text x="1540" y="666" class="elabel" text-anchor="middle">inspection_id</text>
+<path d="M 1730 438 V 620" fill="none" stroke="#2F5D8A" stroke-width="1.4" opacity="0.75"/>
+<text x="1739" y="458" class="card" text-anchor="middle">1</text>
+<text x="1739" y="608" class="card" text-anchor="middle">0..N</text>
+<rect x="1654.85" y="520" width="150.29999999999998" height="15" rx="3" fill="#fff" opacity="0.94"/>
+<text x="1730" y="531.5" class="elabel" text-anchor="middle">rule_id · RULE finding만</text>
+<path d="M 640 775 V 1240 H 1660 V 927" fill="none" stroke="#2F5D8A" stroke-width="1.4" stroke-dasharray="5 3" opacity="0.75"/>
+<text x="649" y="795" class="card" text-anchor="middle">1</text>
+<text x="1669" y="947" class="card" text-anchor="middle">0..N</text>
+<rect x="1093.15" y="1231" width="113.69999999999999" height="15" rx="3" fill="#fff" opacity="0.94"/>
+<text x="1150" y="1242.5" class="elabel" text-anchor="middle">reviewed_by · 확정자</text>
+<path d="M 940 775 V 960" fill="none" stroke="#2F5D8A" stroke-width="1.4" opacity="0.75"/>
+<text x="949" y="795" class="card" text-anchor="middle">1</text>
+<text x="949" y="948" class="card" text-anchor="middle">0..1</text>
+<rect x="877.05" y="858.5" width="125.89999999999999" height="15" rx="3" fill="#fff" opacity="0.94"/>
+<text x="940" y="870" class="elabel" text-anchor="middle">message_id · UNIQUE</text>
+<path d="M 500 775 V 1041.5 H 820" fill="none" stroke="#2F5D8A" stroke-width="1.4" opacity="0.75"/>
+<text x="509" y="795" class="card" text-anchor="middle">1</text>
+<text x="804" y="1035.5" class="card" text-anchor="middle">0..N</text>
+<rect x="569.6" y="1032.5" width="180.79999999999998" height="15" rx="3" fill="#fff" opacity="0.94"/>
+<text x="660" y="1044" class="elabel" text-anchor="middle">requester_id · decided_by_id</text>
+<g>
+<rect x="60" y="150" width="300" height="193" rx="5" fill="#fff" stroke="#C9D0D9" stroke-width="1.2"/>
+<path d="M 60 155 a 5 5 0 0 1 5 -5 H 355 a 5 5 0 0 1 5 5 V 184 H 60 Z" fill="#6B7280"/>
+<text x="72" y="172" class="tname">customer</text>
+<text x="348" y="172" class="tnote" text-anchor="end">V5 · V6</text>
+<rect x="71" y="186.5" width="19" height="13" rx="2.5" fill="#B7791F"/><text x="80.5" y="196" class="badge" text-anchor="middle">PK</text>
+<text x="95" y="197" class="col key">customer_id</text>
+<text x="349" y="197" class="type" text-anchor="end">bigserial</text>
+<rect x="61" y="203" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<rect x="71" y="205.5" width="13" height="13" rx="2.5" fill="#6B7280"/><text x="77.5" y="215" class="badge" text-anchor="middle">U</text>
+<text x="89" y="216" class="col">name</text>
+<text x="349" y="216" class="type" text-anchor="end">varchar(50)</text>
+<text x="73" y="235" class="col">given_name</text>
+<text x="349" y="235" class="type" text-anchor="end">varchar(50)</text>
+<rect x="61" y="241" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<text x="73" y="254" class="col">given_name_detectable</text>
+<text x="349" y="254" class="type" text-anchor="end">boolean</text>
+<rect x="71" y="262.5" width="13" height="13" rx="2.5" fill="#6B7280"/><text x="77.5" y="272" class="badge" text-anchor="middle">U</text>
+<text x="89" y="273" class="col">company</text>
+<text x="349" y="273" class="type" text-anchor="end">varchar(100)</text>
+<rect x="61" y="279" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<text x="73" y="292" class="col">source</text>
+<text x="349" y="292" class="type" text-anchor="end">varchar(100)</text>
+<text x="73" y="311" class="col">is_active</text>
+<text x="349" y="311" class="type" text-anchor="end">boolean</text>
+<rect x="61" y="317" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<text x="73" y="330" class="col">created_at</text>
+<text x="349" y="330" class="type" text-anchor="end">timestamptz</text>
+</g>
+<g>
+<rect x="440" y="150" width="300" height="98" rx="5" fill="#fff" stroke="#C9D0D9" stroke-width="1.2"/>
+<path d="M 440 155 a 5 5 0 0 1 5 -5 H 735 a 5 5 0 0 1 5 5 V 184 H 440 Z" fill="#2F5D8A"/>
+<text x="452" y="172" class="tname">department</text>
+<text x="728" y="172" class="tnote" text-anchor="end">V1</text>
+<rect x="451" y="186.5" width="19" height="13" rx="2.5" fill="#B7791F"/><text x="460.5" y="196" class="badge" text-anchor="middle">PK</text>
+<text x="475" y="197" class="col key">dept_id</text>
+<text x="729" y="197" class="type" text-anchor="end">bigserial</text>
+<rect x="441" y="203" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<rect x="451" y="205.5" width="13" height="13" rx="2.5" fill="#6B7280"/><text x="457.5" y="215" class="badge" text-anchor="middle">U</text>
+<text x="469" y="216" class="col">code</text>
+<text x="729" y="216" class="type" text-anchor="end">varchar(20)</text>
+<text x="453" y="235" class="col">name</text>
+<text x="729" y="235" class="type" text-anchor="end">varchar(50)</text>
+</g>
+<g>
+<rect x="820" y="150" width="300" height="98" rx="5" fill="#fff" stroke="#C9D0D9" stroke-width="1.2"/>
+<path d="M 820 155 a 5 5 0 0 1 5 -5 H 1115 a 5 5 0 0 1 5 5 V 184 H 820 Z" fill="#5B4B8A"/>
+<text x="832" y="172" class="tname">department_policy</text>
+<text x="1108" y="172" class="tnote" text-anchor="end">V1 · 교차 테이블</text>
+<rect x="831" y="186.5" width="19" height="13" rx="2.5" fill="#B7791F"/><text x="840.5" y="196" class="badge" text-anchor="middle">PK</text>
+<rect x="853" y="186.5" width="19" height="13" rx="2.5" fill="#2F5D8A"/><text x="862.5" y="196" class="badge" text-anchor="middle">FK</text>
+<text x="877" y="197" class="col key">dept_id</text>
+<text x="1109" y="197" class="type" text-anchor="end">bigint</text>
+<rect x="821" y="203" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<rect x="831" y="205.5" width="19" height="13" rx="2.5" fill="#B7791F"/><text x="840.5" y="215" class="badge" text-anchor="middle">PK</text>
+<rect x="853" y="205.5" width="19" height="13" rx="2.5" fill="#2F5D8A"/><text x="862.5" y="215" class="badge" text-anchor="middle">FK</text>
+<text x="877" y="216" class="col key">policy_id</text>
+<text x="1109" y="216" class="type" text-anchor="end">bigint</text>
+<text x="833" y="235" class="col">applied_at</text>
+<text x="1109" y="235" class="type" text-anchor="end">timestamptz</text>
+</g>
+<g>
+<rect x="1200" y="150" width="300" height="212" rx="5" fill="#fff" stroke="#C9D0D9" stroke-width="1.2"/>
+<path d="M 1200 155 a 5 5 0 0 1 5 -5 H 1495 a 5 5 0 0 1 5 5 V 184 H 1200 Z" fill="#5B4B8A"/>
+<text x="1212" y="172" class="tname">policy</text>
+<text x="1488" y="172" class="tnote" text-anchor="end">V1 · V3</text>
+<rect x="1211" y="186.5" width="19" height="13" rx="2.5" fill="#B7791F"/><text x="1220.5" y="196" class="badge" text-anchor="middle">PK</text>
+<text x="1235" y="197" class="col key">policy_id</text>
+<text x="1489" y="197" class="type" text-anchor="end">bigserial</text>
+<rect x="1201" y="203" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<rect x="1211" y="205.5" width="13" height="13" rx="2.5" fill="#6B7280"/><text x="1217.5" y="215" class="badge" text-anchor="middle">U</text>
+<text x="1229" y="216" class="col">code</text>
+<text x="1489" y="216" class="type" text-anchor="end">varchar(20)</text>
+<text x="1213" y="235" class="col">name</text>
+<text x="1489" y="235" class="type" text-anchor="end">varchar(100)</text>
+<rect x="1201" y="241" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<text x="1213" y="254" class="col">category</text>
+<text x="1489" y="254" class="type" text-anchor="end">varchar(20)</text>
+<text x="1213" y="273" class="col">version</text>
+<text x="1489" y="273" class="type" text-anchor="end">int</text>
+<rect x="1201" y="279" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<text x="1213" y="292" class="col">scope</text>
+<text x="1489" y="292" class="type" text-anchor="end">varchar(20)</text>
+<rect x="1211" y="300.5" width="19" height="13" rx="2.5" fill="#2F5D8A"/><text x="1220.5" y="310" class="badge" text-anchor="middle">FK</text>
+<text x="1235" y="311" class="col">owner_dept_id</text>
+<text x="1489" y="311" class="type" text-anchor="end">bigint</text>
+<rect x="1201" y="317" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<text x="1213" y="330" class="col">is_active</text>
+<text x="1489" y="330" class="type" text-anchor="end">boolean</text>
+<text x="1213" y="349" class="col">created_at</text>
+<text x="1489" y="349" class="type" text-anchor="end">timestamptz</text>
+</g>
+<g>
+<rect x="1580" y="150" width="300" height="288" rx="5" fill="#fff" stroke="#C9D0D9" stroke-width="1.2"/>
+<path d="M 1580 155 a 5 5 0 0 1 5 -5 H 1875 a 5 5 0 0 1 5 5 V 184 H 1580 Z" fill="#5B4B8A"/>
+<text x="1592" y="172" class="tname">policy_rule</text>
+<text x="1868" y="172" class="tnote" text-anchor="end">V1 · V3 · V5</text>
+<rect x="1591" y="186.5" width="19" height="13" rx="2.5" fill="#B7791F"/><text x="1600.5" y="196" class="badge" text-anchor="middle">PK</text>
+<text x="1615" y="197" class="col key">rule_id</text>
+<text x="1869" y="197" class="type" text-anchor="end">bigserial</text>
+<rect x="1581" y="203" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<rect x="1591" y="205.5" width="19" height="13" rx="2.5" fill="#2F5D8A"/><text x="1600.5" y="215" class="badge" text-anchor="middle">FK</text>
+<text x="1615" y="216" class="col">policy_id</text>
+<text x="1869" y="216" class="type" text-anchor="end">bigint</text>
+<rect x="1591" y="224.5" width="13" height="13" rx="2.5" fill="#6B7280"/><text x="1597.5" y="234" class="badge" text-anchor="middle">U</text>
+<text x="1609" y="235" class="col">code</text>
+<text x="1869" y="235" class="type" text-anchor="end">varchar(30)</text>
+<rect x="1581" y="241" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<text x="1593" y="254" class="col">rule_type</text>
+<text x="1869" y="254" class="type" text-anchor="end">varchar(20)</text>
+<text x="1593" y="273" class="col">pattern</text>
+<text x="1869" y="273" class="type" text-anchor="end">text</text>
+<rect x="1581" y="279" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<text x="1593" y="292" class="col">action</text>
+<text x="1869" y="292" class="type" text-anchor="end">varchar(20)</text>
+<text x="1593" y="311" class="col">mask_label</text>
+<text x="1869" y="311" class="type" text-anchor="end">varchar(30)</text>
+<rect x="1581" y="317" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<text x="1593" y="330" class="col">severity</text>
+<text x="1869" y="330" class="type" text-anchor="end">varchar(10)</text>
+<text x="1593" y="349" class="col">obligation</text>
+<text x="1869" y="349" class="type" text-anchor="end">varchar(20)</text>
+<rect x="1581" y="355" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<text x="1593" y="368" class="col">source</text>
+<text x="1869" y="368" class="type" text-anchor="end">varchar(100)</text>
+<text x="1593" y="387" class="col">description</text>
+<text x="1869" y="387" class="type" text-anchor="end">varchar(200)</text>
+<rect x="1581" y="393" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<text x="1593" y="406" class="col">embargo_until</text>
+<text x="1869" y="406" class="type" text-anchor="end">date</text>
+<text x="1593" y="425" class="col">is_active</text>
+<text x="1869" y="425" class="type" text-anchor="end">boolean</text>
+</g>
+<g>
+<rect x="440" y="620" width="300" height="155" rx="5" fill="#fff" stroke="#C9D0D9" stroke-width="1.2"/>
+<path d="M 440 625 a 5 5 0 0 1 5 -5 H 735 a 5 5 0 0 1 5 5 V 654 H 440 Z" fill="#2F5D8A"/>
+<text x="452" y="642" class="tname">app_user</text>
+<text x="728" y="642" class="tnote" text-anchor="end">V1</text>
+<rect x="451" y="656.5" width="19" height="13" rx="2.5" fill="#B7791F"/><text x="460.5" y="666" class="badge" text-anchor="middle">PK</text>
+<text x="475" y="667" class="col key">user_id</text>
+<text x="729" y="667" class="type" text-anchor="end">bigserial</text>
+<rect x="441" y="673" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<rect x="451" y="675.5" width="19" height="13" rx="2.5" fill="#2F5D8A"/><text x="460.5" y="685" class="badge" text-anchor="middle">FK</text>
+<text x="475" y="686" class="col">dept_id</text>
+<text x="729" y="686" class="type" text-anchor="end">bigint</text>
+<text x="453" y="705" class="col">name</text>
+<text x="729" y="705" class="type" text-anchor="end">varchar(50)</text>
+<rect x="441" y="711" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<rect x="451" y="713.5" width="13" height="13" rx="2.5" fill="#6B7280"/><text x="457.5" y="723" class="badge" text-anchor="middle">U</text>
+<text x="469" y="724" class="col">email</text>
+<text x="729" y="724" class="type" text-anchor="end">varchar(100)</text>
+<text x="453" y="743" class="col">role</text>
+<text x="729" y="743" class="type" text-anchor="end">varchar(20)</text>
+<rect x="441" y="749" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<text x="453" y="762" class="col">created_at</text>
+<text x="729" y="762" class="type" text-anchor="end">timestamptz</text>
+</g>
+<g>
+<rect x="820" y="620" width="300" height="155" rx="5" fill="#fff" stroke="#C9D0D9" stroke-width="1.2"/>
+<path d="M 820 625 a 5 5 0 0 1 5 -5 H 1115 a 5 5 0 0 1 5 5 V 654 H 820 Z" fill="#2E7D5B"/>
+<text x="832" y="642" class="tname">message</text>
+<text x="1108" y="642" class="tnote" text-anchor="end">V1</text>
+<rect x="831" y="656.5" width="19" height="13" rx="2.5" fill="#B7791F"/><text x="840.5" y="666" class="badge" text-anchor="middle">PK</text>
+<text x="855" y="667" class="col key">message_id</text>
+<text x="1109" y="667" class="type" text-anchor="end">bigserial</text>
+<rect x="821" y="673" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<rect x="831" y="675.5" width="19" height="13" rx="2.5" fill="#2F5D8A"/><text x="840.5" y="685" class="badge" text-anchor="middle">FK</text>
+<text x="855" y="686" class="col">user_id</text>
+<text x="1109" y="686" class="type" text-anchor="end">bigint</text>
+<text x="833" y="705" class="col">original_text</text>
+<text x="1109" y="705" class="type" text-anchor="end">text</text>
+<rect x="821" y="711" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<text x="833" y="724" class="col">submitted_text</text>
+<text x="1109" y="724" class="type" text-anchor="end">text</text>
+<text x="833" y="743" class="col">status</text>
+<text x="1109" y="743" class="type" text-anchor="end">varchar(20)</text>
+<rect x="821" y="749" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<text x="833" y="762" class="col">created_at</text>
+<text x="1109" y="762" class="type" text-anchor="end">timestamptz</text>
+</g>
+<g>
+<rect x="1200" y="620" width="300" height="250" rx="5" fill="#fff" stroke="#C9D0D9" stroke-width="1.2"/>
+<path d="M 1200 625 a 5 5 0 0 1 5 -5 H 1495 a 5 5 0 0 1 5 5 V 654 H 1200 Z" fill="#2E7D5B"/>
+<text x="1212" y="642" class="tname">inspection</text>
+<text x="1488" y="642" class="tnote" text-anchor="end">V1</text>
+<rect x="1211" y="656.5" width="19" height="13" rx="2.5" fill="#B7791F"/><text x="1220.5" y="666" class="badge" text-anchor="middle">PK</text>
+<text x="1235" y="667" class="col key">inspection_id</text>
+<text x="1489" y="667" class="type" text-anchor="end">bigserial</text>
+<rect x="1201" y="673" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<rect x="1211" y="675.5" width="19" height="13" rx="2.5" fill="#2F5D8A"/><text x="1220.5" y="685" class="badge" text-anchor="middle">FK</text>
+<text x="1235" y="686" class="col">message_id</text>
+<text x="1489" y="686" class="type" text-anchor="end">bigint</text>
+<text x="1213" y="705" class="col">phase</text>
+<text x="1489" y="705" class="type" text-anchor="end">varchar(10)</text>
+<rect x="1201" y="711" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<rect x="1211" y="713.5" width="13" height="13" rx="2.5" fill="#5B4B8A"/><text x="1217.5" y="723" class="badge" text-anchor="middle">J</text>
+<text x="1229" y="724" class="col">policy_snapshot</text>
+<text x="1489" y="724" class="type" text-anchor="end">jsonb</text>
+<rect x="1211" y="732.5" width="13" height="13" rx="2.5" fill="#5B4B8A"/><text x="1217.5" y="742" class="badge" text-anchor="middle">J</text>
+<text x="1229" y="743" class="col">rule_result</text>
+<text x="1489" y="743" class="type" text-anchor="end">jsonb</text>
+<rect x="1201" y="749" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<text x="1213" y="762" class="col">ai_status</text>
+<text x="1489" y="762" class="type" text-anchor="end">varchar(20)</text>
+<rect x="1211" y="770.5" width="13" height="13" rx="2.5" fill="#5B4B8A"/><text x="1217.5" y="780" class="badge" text-anchor="middle">J</text>
+<text x="1229" y="781" class="col">ai_result</text>
+<text x="1489" y="781" class="type" text-anchor="end">jsonb</text>
+<rect x="1201" y="787" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<text x="1213" y="800" class="col">final_decision</text>
+<text x="1489" y="800" class="type" text-anchor="end">varchar(20)</text>
+<text x="1213" y="819" class="col">decided_by</text>
+<text x="1489" y="819" class="type" text-anchor="end">varchar(10)</text>
+<rect x="1201" y="825" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<text x="1213" y="838" class="col">created_at</text>
+<text x="1489" y="838" class="type" text-anchor="end">timestamptz</text>
+<text x="1213" y="857" class="col">completed_at</text>
+<text x="1489" y="857" class="type" text-anchor="end">timestamptz</text>
+</g>
+<g>
+<rect x="1580" y="620" width="300" height="307" rx="5" fill="#fff" stroke="#C9D0D9" stroke-width="1.2"/>
+<path d="M 1580 625 a 5 5 0 0 1 5 -5 H 1875 a 5 5 0 0 1 5 5 V 654 H 1580 Z" fill="#2E7D5B"/>
+<text x="1592" y="642" class="tname">inspection_finding</text>
+<text x="1868" y="642" class="tnote" text-anchor="end">V1</text>
+<rect x="1591" y="656.5" width="19" height="13" rx="2.5" fill="#B7791F"/><text x="1600.5" y="666" class="badge" text-anchor="middle">PK</text>
+<text x="1615" y="667" class="col key">finding_id</text>
+<text x="1869" y="667" class="type" text-anchor="end">bigserial</text>
+<rect x="1581" y="673" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<rect x="1591" y="675.5" width="19" height="13" rx="2.5" fill="#2F5D8A"/><text x="1600.5" y="685" class="badge" text-anchor="middle">FK</text>
+<text x="1615" y="686" class="col">inspection_id</text>
+<text x="1869" y="686" class="type" text-anchor="end">bigint</text>
+<text x="1593" y="705" class="col">source</text>
+<text x="1869" y="705" class="type" text-anchor="end">varchar(10)</text>
+<rect x="1581" y="711" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<rect x="1591" y="713.5" width="19" height="13" rx="2.5" fill="#2F5D8A"/><text x="1600.5" y="723" class="badge" text-anchor="middle">FK</text>
+<text x="1615" y="724" class="col">rule_id</text>
+<text x="1869" y="724" class="type" text-anchor="end">bigint</text>
+<text x="1593" y="743" class="col">code</text>
+<text x="1869" y="743" class="type" text-anchor="end">varchar(30)</text>
+<rect x="1581" y="749" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<text x="1593" y="762" class="col">category</text>
+<text x="1869" y="762" class="type" text-anchor="end">varchar(20)</text>
+<text x="1593" y="781" class="col">span_start</text>
+<text x="1869" y="781" class="type" text-anchor="end">int</text>
+<rect x="1581" y="787" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<text x="1593" y="800" class="col">span_end</text>
+<text x="1869" y="800" class="type" text-anchor="end">int</text>
+<text x="1593" y="819" class="col">action</text>
+<text x="1869" y="819" class="type" text-anchor="end">varchar(20)</text>
+<rect x="1581" y="825" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<text x="1593" y="838" class="col">rationale</text>
+<text x="1869" y="838" class="type" text-anchor="end">text</text>
+<rect x="1591" y="846.5" width="13" height="13" rx="2.5" fill="#5B4B8A"/><text x="1597.5" y="856" class="badge" text-anchor="middle">J</text>
+<text x="1609" y="857" class="col">evidence</text>
+<text x="1869" y="857" class="type" text-anchor="end">jsonb</text>
+<rect x="1581" y="863" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<text x="1593" y="876" class="col">review_status</text>
+<text x="1869" y="876" class="type" text-anchor="end">varchar(20)</text>
+<rect x="1591" y="884.5" width="19" height="13" rx="2.5" fill="#2F5D8A"/><text x="1600.5" y="894" class="badge" text-anchor="middle">FK</text>
+<text x="1615" y="895" class="col">reviewed_by</text>
+<text x="1869" y="895" class="type" text-anchor="end">bigint</text>
+<rect x="1581" y="901" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<text x="1593" y="914" class="col">reviewed_at</text>
+<text x="1869" y="914" class="type" text-anchor="end">timestamptz</text>
+</g>
+<g>
+<rect x="820" y="960" width="300" height="212" rx="5" fill="#fff" stroke="#C9D0D9" stroke-width="1.2"/>
+<path d="M 820 965 a 5 5 0 0 1 5 -5 H 1115 a 5 5 0 0 1 5 5 V 994 H 820 Z" fill="#B7791F"/>
+<text x="832" y="982" class="tname">unmask_request</text>
+<text x="1108" y="982" class="tnote" text-anchor="end">V7</text>
+<rect x="831" y="996.5" width="19" height="13" rx="2.5" fill="#B7791F"/><text x="840.5" y="1006" class="badge" text-anchor="middle">PK</text>
+<text x="855" y="1007" class="col key">request_id</text>
+<text x="1109" y="1007" class="type" text-anchor="end">bigserial</text>
+<rect x="821" y="1013" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<rect x="831" y="1015.5" width="19" height="13" rx="2.5" fill="#2F5D8A"/><text x="840.5" y="1025" class="badge" text-anchor="middle">FK</text>
+<rect x="853" y="1015.5" width="13" height="13" rx="2.5" fill="#6B7280"/><text x="859.5" y="1025" class="badge" text-anchor="middle">U</text>
+<text x="871" y="1026" class="col">message_id</text>
+<text x="1109" y="1026" class="type" text-anchor="end">bigint</text>
+<rect x="831" y="1034.5" width="19" height="13" rx="2.5" fill="#2F5D8A"/><text x="840.5" y="1044" class="badge" text-anchor="middle">FK</text>
+<text x="855" y="1045" class="col">requester_id</text>
+<text x="1109" y="1045" class="type" text-anchor="end">bigint</text>
+<rect x="821" y="1051" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<text x="833" y="1064" class="col">reason</text>
+<text x="1109" y="1064" class="type" text-anchor="end">text</text>
+<text x="833" y="1083" class="col">status</text>
+<text x="1109" y="1083" class="type" text-anchor="end">varchar(20)</text>
+<rect x="821" y="1089" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<rect x="831" y="1091.5" width="19" height="13" rx="2.5" fill="#2F5D8A"/><text x="840.5" y="1101" class="badge" text-anchor="middle">FK</text>
+<text x="855" y="1102" class="col">decided_by_id</text>
+<text x="1109" y="1102" class="type" text-anchor="end">bigint</text>
+<text x="833" y="1121" class="col">decided_at</text>
+<text x="1109" y="1121" class="type" text-anchor="end">timestamptz</text>
+<rect x="821" y="1127" width="298" height="19" fill="#EFF2F6" opacity="0.55"/>
+<text x="833" y="1140" class="col">decision_note</text>
+<text x="1109" y="1140" class="type" text-anchor="end">text</text>
+<text x="833" y="1159" class="col">created_at</text>
+<text x="1109" y="1159" class="type" text-anchor="end">timestamptz</text>
+</g>
+
+<g transform="translate(60, 369)">
+  <rect x="0" y="0" width="300" height="76" rx="5" fill="#F4F6F9" stroke="#C9D0D9" stroke-width="1"/>
+  <text x="14" y="21" class="noteb">FK가 없다</text>
+  <text x="14" y="39" class="note">ROSTER 규칙(PII-CUST-07·08)의 pattern에</text>
+  <text x="14" y="55" class="note">컬럼명만 있고, PolicyService가 판정 직전에</text>
+  <text x="14" y="71" class="note">명단을 읽어 정규식으로 펼친다.</text>
+</g>
+
+<g transform="translate(1200, 1076)">
+  <rect x="0" y="0" width="330" height="96" rx="5" fill="#F4F6F9" stroke="#C9D0D9" stroke-width="1"/>
+  <text x="14" y="21" class="noteb">JSONB 3개가 확장 지점이다</text>
+  <text x="14" y="39" class="note">policy_snapshot이 판정 시점의 근거를 보존하고,</text>
+  <text x="14" y="55" class="note">rule_result·ai_result가 원본 응답을 담는다.</text>
+  <text x="14" y="75" class="noteb">AI 스키마가 바뀌어도 컬럼을 추가하지 않는다.</text>
+</g>
+
+<text x="60" y="1308" class="note">기획서 6.5의 Future 엔티티(attachment · knowledge_source · policy_audit · ai_provider_config)는 DDL이 없어 그리지 않았다 — 논리 모델은 docs/erd.dbml에 있다.   생성: node docs/erd-build.mjs</text>
+</svg>
