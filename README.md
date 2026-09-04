@@ -23,6 +23,32 @@ SKALA AI 웹 서비스 설계 미니프로젝트 · 4반 5조 · 2026.09.02 – 
 
 핵심 설계는 책임 경계입니다. **규칙 엔진은 결정하고(허용/마스킹/차단), AI는 제안만 합니다.** AI가 제시한 후보는 보안 담당자가 감사 콘솔에서 확정하기 전까지 어떤 판정도 되지 않습니다. 이 경계는 화면에서도, 스키마에서도 강제됩니다 — `aiAssessment`에는 `decision`·`block`·`allow`·`confidence` 필드가 아예 없습니다.
 
+## 팀
+
+SKALA AI 웹 서비스 설계 미니프로젝트 · 4반 5조. 역할명이 아니라 **완료할 산출물**로 나눴습니다 — 4명이 7개 역할을 겸임하되, 2일차 오전부터 병렬 작업이 가능하도록 축을 분리했습니다.
+
+<table>
+<tr>
+<td align="center" width="25%"><a href="https://github.com/siamin20"><img src="https://avatars.githubusercontent.com/u/118173500?v=4" width="88" alt="신민서"><br><b>신민서</b></a><br><sub><a href="https://github.com/siamin20">@siamin20</a></sub></td>
+<td align="center" width="25%"><a href="https://github.com/develop-jw"><img src="https://avatars.githubusercontent.com/u/133128395?v=4" width="88" alt="조종원"><br><b>조종원</b></a><br><sub><a href="https://github.com/develop-jw">@develop-jw</a></sub></td>
+<td align="center" width="25%"><a href="https://github.com/41ways"><img src="https://avatars.githubusercontent.com/u/282542136?v=4" width="88" alt="정한결"><br><b>정한결</b></a><br><sub><a href="https://github.com/41ways">@41ways</a></sub></td>
+<td align="center" width="25%"><a href="https://github.com/givpro22"><img src="https://avatars.githubusercontent.com/u/73772126?v=4" width="88" alt="박영서"><br><b>박영서</b></a><br><sub><a href="https://github.com/givpro22">@givpro22</a></sub></td>
+</tr>
+<tr>
+<td align="center"><b>PM + AI</b></td>
+<td align="center"><b>DA + BE</b></td>
+<td align="center"><b>API + BE</b></td>
+<td align="center"><b>FE + DevOps</b></td>
+</tr>
+</table>
+
+| 이름 | GitHub | 역할 | 맡은 산출물 |
+|---|---|---|---|
+| **신민서** | [@siamin20](https://github.com/siamin20) | PM + AI | 기획 범위 · Use Case · Figma 화면 설계 · `MockAiInspector` |
+| **조종원** | [@develop-jw](https://github.com/develop-jw) | DA + BE | ERD · Flyway 마이그레이션 · JPA 엔티티 · REST 명세 · 발표자료 |
+| **정한결** | [@41ways](https://github.com/41ways) | API + BE | REST 명세 · JSON 스키마 · `@Async` 비동기 검토 · Review API |
+| **박영서** | [@givpro22](https://github.com/givpro22) | FE + DevOps | Vue 화면 · CI/CD · GitHub 세팅 · E2E 통합 검증 |
+
 ## 목차
 
 | | | |
@@ -32,6 +58,7 @@ SKALA AI 웹 서비스 설계 미니프로젝트 · 4반 5조 · 2026.09.02 – 
 | [비동기 검토](#ai가-늦어도-화면은-멈추지-않습니다) | [AI 검사기 성능](#ai-검사기는-얼마나-잡아내는가) | [데이터 모델](#데이터-모델) |
 | [API](#api) | [실행](#실행) | [배포와 CI/CD](#배포) |
 | [환경변수](#환경변수) | [데모 케이스](#데모-케이스) | [팀과 협업](#팀과-협업) |
+| [팀](#팀) | [로드맵](#로드맵) | [문서](#문서) |
 
 ---
 
@@ -522,14 +549,7 @@ GATEWAY_EMBARGO_REFERENCE_DATE=2026-09-04 ./gradlew bootRun
 
 ## 팀과 협업
 
-역할명이 아니라 **완료할 산출물**로 나눴습니다. 4명이 7개 역할을 겸임하되, 2일차 오전부터 병렬 작업이 가능하도록 축을 분리했습니다.
-
-| | 이름 | 역할 | 산출물 |
-|---|---|---|---|
-| **A** | 신민서 | PM + AI | 기획 범위 · Use Case · Figma · `MockAiInspector` |
-| **B** | 조종원 | DA + BE | ERD · Flyway · JPA · REST 명세 · 발표자료 |
-| **C** | 정한결 | API + BE | REST 명세 · JSON 스키마 · `@Async` · Review API |
-| **D** | 박영서 | FE + DevOps | Vue 화면 · CI/CD · GitHub 세팅 · E2E 통합 검증 |
+구성원과 역할은 [팀](#팀)에 있습니다. 여기서는 넷이 어떻게 합쳤는지만 적습니다.
 
 3일 프로젝트에서는 기능 수보다 `main`의 안정성이 더 중요합니다. `develop`·`release` 브랜치까지 두면 머지 경로만 늘어나므로 **`main`과 `feat/*` 둘로만** 운영해 통합 지점을 하나로 유지했습니다.
 
